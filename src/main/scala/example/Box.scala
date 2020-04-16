@@ -8,12 +8,21 @@ import akka.actor.typed.Behavior
 
 object Box {
 
-  trait State
+  //STATE
+  case class Item(description: String)
+  final case class State(items: List[Item])
+  
   object State {
-    val empty = null
+    val empty = State(List.empty)
   }
-  trait Command
-  trait Event
+
+  //COMMANDS
+  sealed trait Command
+  case class AddItem(description: String) extends Command
+
+  //EVENTS
+  sealed trait Event
+  case class ItemAdded(sizeLeft: Int) extends Event
 
   def apply(boxId: String): Behavior[Command] = {
     EventSourcedBehavior[Command, Event, State](
@@ -23,5 +32,8 @@ object Box {
       (state, event) => state
     )
   }
+
+  def commandHanlder(state: State, command: Command) = ??? // what's the result type?
+  def eventHandler(state: State, event: Event) = ??? // what's the result type? 
 
 }

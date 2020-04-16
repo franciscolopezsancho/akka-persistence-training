@@ -20,3 +20,24 @@ Having the following signature.
       commandHandler: (State, Command) => Effect[Event, State],
       eventHandler: (State, Event) => State): EventSourcedBehavior[Command, Event, State
 ```
+
+
+# Step2. Create logic
+
+We just added the minimal amount of code so we can try to model the commandHandler and the eventHandler as follows. The idea of the flow is Command -> Event -> State such as will send a message `AddItem` to the Box. Handling that Command would imply to check there's enough room to add the object. If so then it will trigger an `ItemAdded` event that will update the `State` of the Box.
+
+Effect.persist(x); the x here is the Event you'd like to persist and this will be done in two phases. Both of which have to be succesful.
+    1. First the event handler has to receive this Event and react accordingly. In our case would be updating the State of the Box. Adding the item.
+    2. Then it will persist in the DB of choice the event appending an entry in the journal. In our case we'll use an db in memory that can be accessed started and acceses inside a test.
+
+    In case any of the two fail the actor we'll be stopped and when ressurrected it will keep the same state as before this message. 
+
+Effect.none -> as it suggests it will no modify the state nor persist in the journal. 
+
+What I would suggest is to try to model the command handler and eventHandler. If you are looking as you should to the final solution. You'll see there among other things we are replying after persisting. Let's not worry about that yet.
+
+To check you're doing fine, maybe you could `prinln` when state get's updated. So you may see all the items
+
+when `git checkout [step 3]` you'll get the solution
+
+
