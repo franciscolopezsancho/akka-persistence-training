@@ -4,6 +4,7 @@ import akka.persistence.typed.scaladsl.EventSourcedBehavior
 import akka.persistence.typed.scaladsl.Effect
 import akka.persistence.typed.PersistenceId
 import akka.actor.typed.Behavior
+import akka.actor.typed.ActorRef
 
 object Box {
 
@@ -21,7 +22,7 @@ object Box {
 
   //COMMANDS
   sealed trait Command
-  case class AddItem(description: String) extends Command
+  case class AddItem(description: String, replyTo: ActorRef[State]) extends Command
 
   //EVENTS
   sealed trait Event
@@ -38,17 +39,16 @@ object Box {
 
   def commandHandler(state: State, command: Command): Effect[Event, State] = {
     command match {
-      case AddItem(description) => {
+      case AddItem(description,replyTo) => {
         Effect.persist(ItemAdded(description))
+        .thenRun(state => replyTo ! state  )
       }
     }
   }
   def eventHandler(state: State, event: Event): State = {
     event match {
       case ItemAdded(description) => {
-        val status = state.addItem(Item(description))
-        println(s"################## $status")
-        status
+        state.addItem(Item(description))
       }
     }
   }

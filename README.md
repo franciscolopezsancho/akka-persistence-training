@@ -45,8 +45,28 @@ when `git checkout [step 3]` you'll get the solution
 
 # Step 3. Add replyTo
 
+
+## main point
+Let's add now the reply. When some actor send's an AddItem now will also have to pass a reference to an Actor such as the AddItem Command will reply to.
+
+The idea here is to add a replyTo the the AddItem and `thenRun` after the persist. I recommend to have a look to the `akka.persistence.typed.scaladsl.EffectBuilder` api to check how to.
+
+### add ons
+
+Also useful to know that there's a `thenReply` instead of `thenRun` that can help to enforce replies when `EventSourcedBehavior.withEnforcedReplies[Command, Event, State] ...` is added.
+
 If running the test you'll now see test a WARN saying you do not have snapshot store in place. For detail see 'reference.conf'. This can be found at https://doc.akka.io/docs/akka/current/general/configuration-reference.html#akka-persistence
 
 In our case you could add `akka.persistence.snapshot-store.plugin = "akka.persistence.snapshot-store.local"` in the BoxSpec configuration.
 
-Let's add now the reply. When some actor send's an AddItem now will also have to pass a reference to an Actor such as the AddItem Command will reply to.
+Another thought when testing. Take into account that if you want to check if two messages have been processed you may do 
+    ```probe.expectMessage([first];
+       probe.expectMessage([second]`
+    ```
+    or just use eventually as below.
+      cart ! Box.AddItem("bar", probe.ref)
+      cart ! Box.AddItem("foo", probe.ref)
+      eventually{
+       probe.expectMessage(Box.State(List(Box.Item("foo"),Box.Item("bar"))))
+      }
+    ```
