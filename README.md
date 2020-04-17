@@ -70,3 +70,12 @@ Another thought when testing. Take into account that if you want to check if two
        probe.expectMessage(Box.State(List(Box.Item("foo"),Box.Item("bar"))))
       }
     ```
+
+
+## 4. Let's add a bit of logic
+
+Now let's see how we can add a max room in the box so in case an Item of size bigger than
+the room we have left we'll get back a `Rejected(item,roomLeft)`
+
+So maybe a good approach is to create the new requirements an just rerun the already there test.
+

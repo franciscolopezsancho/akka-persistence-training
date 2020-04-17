@@ -4,16 +4,34 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import org.scalatest.wordspec.AnyWordSpecLike
+import example.Box._
 
 class BoxSpec extends ScalaTestWithActorTestKit(s"""
       akka.persistence.journal.plugin = "akka.persistence.journal.inmem"
        """) with AnyWordSpecLike {
+
+  def randomId = scala.util.Random.nextString(4)
+
   "The box object" should {
     "accept Commands, transform them in events and persist" in {
-      val cart = testKit.spawn(Box(scala.util.Random.nextString(4)))
-      val probe = testKit.createTestProbe[Box.State]()
-      cart ! Box.AddItem("bar", probe.ref)
-      probe.expectMessage(Box.State(List(Box.Item("bar"))))
+      val maxCapacity = 10
+      val cart = testKit.spawn(Box(randomId,maxCapacity))
+      val probe = testKit.createTestProbe[Confirmation]()
+      cart ! AddItem("bar",1,probe.ref)
+      probe.expectMessage(Accepted(9))
+    }
+  }
+
+  "The box object" should {
+    "Reject after second item surpasses the max capacity" in {
+     val maxCapacity = 10
+      val cart = testKit.spawn(Box(randomId,maxCapacity))
+      val probe = testKit.createTestProbe[Confirmation]()
+      cart ! AddItem("bar",1,probe.ref)
+      probe.expectMessage(Accepted(9))
+
+      cart ! AddItem("foo",11,probe.ref)
+      probe.expectMessage(Rejected(Item("foo",11),9))
     }
   }
 }
