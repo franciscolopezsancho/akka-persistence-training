@@ -38,6 +38,11 @@ What I would suggest is to try to model the command handler and eventHandler. If
 
 To check you're doing fine, maybe you could `prinln` when state get's updated. So you may see all the items
 
+Also you'll need to add a store to keep the journal through configuration. This can be done in application.conf addind then `ScalaTestWithActorTestKit(com.typesafe.config.ConfigFactory.load())` or directly on the test with a simple string such as `ScalaTestWithActorTestKit(""" as many lines of configuration as desired """)`. These two can even be combined with `ScalaTestWithActorTestKit(com.typesafe.config.ConfigFactory.load().withFallback( """ yada yada """)`
+
 when `git checkout [step 3]` you'll get the solution
 
 
+# Step 3. 
+
+From the previous step we can star with the implemented methods. Let's add now the reply.
