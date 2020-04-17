@@ -47,6 +47,7 @@ when `git checkout [step 3]` you'll get the solution
 
 
 ## main point
+
 Let's add now the reply. When some actor send's an AddItem now will also have to pass a reference to an Actor such as the AddItem Command will reply to.
 
 The idea here is to add a replyTo the the AddItem and `thenRun` after the persist. I recommend to have a look to the `akka.persistence.typed.scaladsl.EffectBuilder` api to check how to.
@@ -79,3 +80,13 @@ the room we have left we'll get back a `Rejected(item,roomLeft)`
 
 So maybe a good approach is to create the new requirements an just rerun the already there test.
 
+
+
+## 5. Let's add an external DB
+Let's add now an external DB. Such a JDBC one. Is worth to mention now that every time a ItemAdded is persisted, now not just in a in memory db, this will land in a table, called journal, we'll have to create. All the required documentation to do this is in here:
+https://doc.akka.io/docs/akka-persistence-jdbc/3.5.2/
+
+I'll picked MySql (for not special reason). Also worth to point out that as previously in Step 2 we mention about two methods of configuration. From a file or from a String in the Test itself. To use configure the connection to the DB now we are going to go for the `application.conf` file option. 
+
+Last but no least you my find a problem when trying to write to disk as we still didn't add any Serialization. Have a look at https://doc.akka.io/docs/akka/current/serialization.html#usage for a general understanding
+I would recommend to use Jackson though and https://doc.akka.io/docs/akka/current/serialization-jackson.html is all you need to know. I would recommend don't solve this part until you get the error. 
