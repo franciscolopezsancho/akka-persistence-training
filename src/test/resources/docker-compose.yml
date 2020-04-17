@@ -1,0 +1,7 @@
+mysql:
+    image: mysql:latest
+    container_name: mysql-test
+    environment:
+      - "MYSQL_ROOT_PASSWORD=root" # credentials (root:root)
+    ports:
+      - "3306:3306" 

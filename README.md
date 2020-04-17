@@ -1,5 +1,5 @@
 # Step 1. An empty Box
-### first commit with message (step 1. Empty Box with types)
+### Nothing to do here. Just to have a look to the most basic component `akka.persistence.typed.scaladsl.EventSourcedBehavior` and the gist of the project.
 
 The gist of this Box is to be able to accept objects as long as is not full. We'll model this with akka-persistence.
 
@@ -24,23 +24,23 @@ Having the following signature.
 
 # Step2. Create flow Command -> Event -> State
 
-We just added the minimal amount of code so we can try to model the commandHandler and the eventHandler as follows. The idea of the flow is Command -> Event -> State such as will send a message `AddItem` to the Box. Handling that Command would imply to check there's enough room to add the object. If so then it will trigger an `ItemAdded` event that will update the `State` of the Box.
+We just added the minimal amount of code so we can try to model the commandHandler and the eventHandler as follows. The idea of the flow is Command -> Event -> State. Beginning sending a Command message `AddItem` to the Box which then it will trigger an `ItemAdded` event that will update the `State` of the Box.
 
-Effect.persist(x); the x here is the Event you'd like to persist and this will be done in two phases. Both of which have to be succesful.
+To do this you'll need to know about: 
+
+`Effect.persist(x)`; the x here is the Event you'd like to persist and this will be done in two phases. Both of which have to be succesful.
     1. First the event handler has to receive this Event and react accordingly. In our case would be updating the State of the Box. Adding the item.
     2. Then it will persist in the DB of choice the event appending an entry in the journal. In our case we'll use an db in memory that can be accessed started and acceses inside a test.
 
     In case any of the two fail the actor we'll be stopped and when ressurrected it will keep the same state as before this message. 
 
-Effect.none -> as it suggests it will no modify the state nor persist in the journal. 
+`Effect.none` -> as it suggests it will no modify the state nor persist in the journal. You won't need it now but you'll do later on. 
 
-What I would suggest is to try to model the command handler and eventHandler. If you are looking as you should to the final solution. You'll see there among other things we are replying after persisting. Let's not worry about that yet.
+What I would suggest is to try to model the command handler and eventHandler. If you are looking as you should to the final solution. You'll see there, among other things, we are replying after persisting. Just saying that don't you not worry about replying yet.
 
-To check you're doing fine, maybe you could `prinln` when state get's updated. So you may see all the items. Please bare in mind that test can stop faster that the println get's into the console. `Thread.sleep(1000)` would solve that.
+To check you're doing fine, maybe you could `println` when state get's updated. So you may see all the items. Please bare in mind that test can stop faster that the `println` get's into the console. You may have to do something about that.
 
-Also you'll need to add a store to keep the journal through configuration. This can be done in application.conf addind then `ScalaTestWithActorTestKit(com.typesafe.config.ConfigFactory.load())` or directly on the test with a simple string such as `ScalaTestWithActorTestKit(""" as many lines of configuration as desired """)`. These two can even be combined with `ScalaTestWithActorTestKit(com.typesafe.config.ConfigFactory.load().withFallback( """ yada yada """)`
-
-when `git checkout [step 3]` you'll get the solution
+Also you'll need to add a store to keep the state of the journal. This is configuration that can be done through application.conf and then adding it to `ScalaTestWithActorTestKit(com.typesafe.config.ConfigFactory.load())` or directly on the test with a simple string such as `ScalaTestWithActorTestKit(""" as many lines of configuration as desired """)`. These two can even be combined with `ScalaTestWithActorTestKit(com.typesafe.config.ConfigFactory.load().withFallback( """ yada yada """)`
 
 
 # Step 3. Add replyTo
