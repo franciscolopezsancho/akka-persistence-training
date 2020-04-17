@@ -36,7 +36,7 @@ Effect.none -> as it suggests it will no modify the state nor persist in the jou
 
 What I would suggest is to try to model the command handler and eventHandler. If you are looking as you should to the final solution. You'll see there among other things we are replying after persisting. Let's not worry about that yet.
 
-To check you're doing fine, maybe you could `prinln` when state get's updated. So you may see all the items
+To check you're doing fine, maybe you could `prinln` when state get's updated. So you may see all the items. Please bare in mind that test can stop faster that the println get's into the console. `Thread.sleep(1000)` would solve that.
 
 Also you'll need to add a store to keep the journal through configuration. This can be done in application.conf addind then `ScalaTestWithActorTestKit(com.typesafe.config.ConfigFactory.load())` or directly on the test with a simple string such as `ScalaTestWithActorTestKit(""" as many lines of configuration as desired """)`. These two can even be combined with `ScalaTestWithActorTestKit(com.typesafe.config.ConfigFactory.load().withFallback( """ yada yada """)`
 
