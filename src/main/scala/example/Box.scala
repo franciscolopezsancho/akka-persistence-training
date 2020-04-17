@@ -31,21 +31,23 @@ object Box {
     EventSourcedBehavior[Command, Event, State](
       PersistenceId("Box", boxId),
       State.empty,
-      (state, command) => Effect.none,
-      (state, event) => state
+      (state, command) => commandHandler(state,command),
+      (state, event) => eventHandler(state,event) 
     )
   }
 
-  def commandHanlder(state: State, command: Command): Effect[Event, State] = {
+  def commandHandler(state: State, command: Command): Effect[Event, State] = {
     command match {
-      case AddItem(description) => Effect.persist(ItemAdded(description))
+      case AddItem(description) => {
+        Effect.persist(ItemAdded(description))
+      }
     }
   }
   def eventHandler(state: State, event: Event): State = {
     event match {
       case ItemAdded(description) => {
         val status = state.addItem(Item(description))
-        println(status)
+        println(s"################## $status")
         status
       }
     }

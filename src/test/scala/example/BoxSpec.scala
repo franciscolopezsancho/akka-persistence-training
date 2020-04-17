@@ -14,6 +14,7 @@ class BoxSpec extends ScalaTestWithActorTestKit(s"""
       
     cart ! Box.AddItem("bar") 
     cart ! Box.AddItem("foo") 
+    Thread.sleep(1000)
   }
 }
 }

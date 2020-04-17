@@ -22,7 +22,7 @@ Having the following signature.
 ```
 
 
-# Step2. Create logic
+# Step2. Create flow Command -> Event -> State
 
 We just added the minimal amount of code so we can try to model the commandHandler and the eventHandler as follows. The idea of the flow is Command -> Event -> State such as will send a message `AddItem` to the Box. Handling that Command would imply to check there's enough room to add the object. If so then it will trigger an `ItemAdded` event that will update the `State` of the Box.
 
@@ -43,6 +43,10 @@ Also you'll need to add a store to keep the journal through configuration. This 
 when `git checkout [step 3]` you'll get the solution
 
 
-# Step 3. 
+# Step 3. Add replyTo
 
-From the previous step we can star with the implemented methods. Let's add now the reply.
+If running the test you'll now see test a WARN saying you do not have snapshot store in place. For detail see 'reference.conf'. This can be found at https://doc.akka.io/docs/akka/current/general/configuration-reference.html#akka-persistence
+
+In our case you could add `akka.persistence.snapshot-store.plugin = "akka.persistence.snapshot-store.local"` in the BoxSpec configuration.
+
+Let's add now the reply. When some actor send's an AddItem now will also have to pass a reference to an Actor such as the AddItem Command will reply to.
