@@ -5,6 +5,9 @@ import akka.persistence.typed.scaladsl.Effect
 import akka.persistence.typed.PersistenceId
 import akka.actor.typed.Behavior
 import akka.actor.typed.ActorRef
+  
+//BINDING SERIALIZER WITH THIS TRAIT
+trait CborSerializable
 
 object Box {
 
@@ -21,6 +24,7 @@ object Box {
     def empty(maxCapacity: Int) = State(List.empty, maxCapacity)
   }
 
+
   //COMMANDS
   sealed trait Command
   case class AddItem(
@@ -30,8 +34,10 @@ object Box {
   ) extends Command
 
   //EVENTS
-  sealed trait Event
-  case class ItemAdded(description: String, size: Int) extends Event
+  sealed trait Event extends CborSerializable {
+    def boxId: String
+  }
+  case class ItemAdded(boxId: String, description: String, size: Int) extends Event
 
   //REPLIES
   sealed trait Confirmation
@@ -42,17 +48,17 @@ object Box {
     EventSourcedBehavior[Command, Event, State](
       PersistenceId("Box", boxId),
       State.empty(maxCapacity),
-      (state, command) => commandHandler(state, command),
+      (state, command) => commandHandler(boxId, state, command),
       (state, event) => eventHandler(state, event)
     )
   }
 
-  def commandHandler(state: State, command: Command): Effect[Event, State] = {
+  def commandHandler(boxId: String, state: State, command: Command): Effect[Event, State] = {
     command match {
       case AddItem(description, size, replyTo) => {
         if (size < state.roomLeft) {
           Effect
-            .persist(ItemAdded(description, size))
+            .persist(ItemAdded(boxId, description, size))
             .thenRun(state => replyTo ! Accepted(state.roomLeft))
         } else {
           replyTo ! Rejected(Item(description, size), state.roomLeft)
@@ -63,7 +69,7 @@ object Box {
   }
   def eventHandler(state: State, event: Event): State = {
     event match {
-      case ItemAdded(description, size) => {
+      case ItemAdded(boxId, description, size) => {
         state.addItem(Item(description, size))
       }
     }
