@@ -6,9 +6,6 @@ import akka.persistence.typed.PersistenceId
 import akka.actor.typed.Behavior
 import akka.actor.typed.ActorRef
   
-//BINDING SERIALIZER WITH THIS TRAIT
-trait CborSerializable
-
 object Box {
 
   //STATE
@@ -34,7 +31,7 @@ object Box {
   ) extends Command
 
   //EVENTS
-  sealed trait Event extends CborSerializable {
+  sealed trait Event {
     def boxId: String
   }
   case class ItemAdded(boxId: String, description: String, size: Int) extends Event
