@@ -7,9 +7,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import example.Box._
 import com.typesafe.config.ConfigFactory
 
-class BoxSpec extends ScalaTestWithActorTestKit(s"""
-      akka.persistence.journal.plugin = "akka.persistence.journal.inmem"
-       """) with AnyWordSpecLike {
+class BoxSpec extends ScalaTestWithActorTestKit() with AnyWordSpecLike {
 
   "The box object" should {
     "accept Commands, transform them in events and persist" in {
