@@ -12,6 +12,7 @@ object Box {
   case class Item(description: String)
   final case class State(items: List[Item]) {
     def addItem(item: Item): State = {
+      println(s"######### adding $item to [$items]")
       this.copy(items = item +: items)
     }
   }
@@ -24,7 +25,6 @@ object Box {
   sealed trait Command
   case class AddItem(
       description: String,
-      replyTo: ActorRef[State]
   ) extends Command
 
   //EVENTS
@@ -48,10 +48,9 @@ object Box {
       command: Command
   ): Effect[Event, State] = {
     command match {
-      case AddItem(description, replyTo) => {
+      case AddItem(description) => {
         Effect
           .persist(ItemAdded(boxId, description))
-          .thenRun(state => replyTo ! state)
       }
     }
   }
