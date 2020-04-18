@@ -63,47 +63,51 @@ If running the test you'll now see test a WARN saying you do not have snapshot s
 
 In our case you could add `akka.persistence.snapshot-store.plugin = "akka.persistence.snapshot-store.local"` in the BoxSpec configuration.
 
-Another thought when testing. Take into account that if you want to check if two messages have been processed you may do 
-    ```
-    probe.expectMessage([first];
+Another thought when testing. Take into account that if you want to check if two messages have been processed you may need to do
+
+
+    probe.expectMessage([first]
     probe.expectMessage([second]
-    ```
-    or just use eventually as below.
-    ```
-       cart ! Box.AddItem("bar", probe.ref)
-       cart ! Box.AddItem("foo", probe.ref)
-       eventually{
-       probe.expectMessage(Box.State(List(Box.Item("foo"),Box.Item("bar"))))
-      }
-    ```
+	
+
+
+ or just use eventually as below.
+    
+
+    cart ! Box.AddItem("bar", probe.ref)
+    cart ! Box.AddItem("foo", probe.ref)
+    eventually{
+      probe.expectMessage(Box.State(List(Box.Item("foo"),Box.Item("bar"))))
+    }
+    
 
 
 ### 4. Let's add a bit of logic
 
-Now let's see how we can add a max room in the `Box` so in case we add an `Item` of size bigger than
-the room we have left we'll get back a `Rejected(item,roomLeft)`
+Now let's see how we can add a max room in the `Box` so in case we add an `Item` of size bigger than the room we have left we'll get back a `Rejected(item,roomLeft)`
 
 Maybe a good approach is to create this new bit of logic an just adjust the already existing test before dealing with Rejections, if that makes sense.
 
 ### 5. Let's add an external DB
-Let's add now an external DB. Such a JDBC one. Is worth to mention now that every time a ItemAdded is persisted, now not just in a in memory db, this will land in a table, called journal, we'll have to create. All the required documentation to do this is in here:
+
+Let's add now an external DB, and connect to it with a JDBC driver. Is worth to mention that every time a ItemAdded is persisted, this will land in a table, called journal, we will have to create. All the required documentation to do this is in here:
 https://doc.akka.io/docs/akka-persistence-jdbc/3.5.2/
 
 From the link above I would not create the snapshot table until required, though. 
 
-I'll picked MySql (for not special reason). Also worth to point out that as previously in Step 2 we mention about two methods of configuration. From a file or from a String in the Test itself. To use configure the connection to the DB now we are going to go for the `application.conf` file option. 
+We'll use in here MySql (for not special reason). In Step 2 we mention about two methods of configuration. From a file or from a String in the Test itself to configure the connection to the DB. Now we are going to go for the `application.conf` file option. 
 
-You can run start the mysql db with `docker-compose up -d` from `src/test/resources` and get in to create what required with `docker exec -it mysql-test bash`.
+You can run start the mysql db with `docker-compose up -d` from `src/test/resources` and get into it with `docker exec -it mysql-test bash`.
 
-Last but no least you my find a problem when trying to write to disk as we still didn't add any Serialization. Have a look at https://doc.akka.io/docs/akka/current/serialization.html#usage for a general understanding
-I would recommend to use Jackson though and https://doc.akka.io/docs/akka/current/serialization-jackson.html is all you need to know. I would recommend don't solve this part until you get the error.
+Last but no least you may find a problem when trying to write to disk as we still didn't add any Serialization. Have a look at https://doc.akka.io/docs/akka/current/serialization.html#usage for a general understanding
+I would recommend to use Jackson though and https://doc.akka.io/docs/akka/current/serialization-jackson.html is all you need to know. I would recommend don't solve this part until you get an error of this sort.
 
 #### hopefully done
 
 Now everything is in place you should be able to see entries in the DB such as 
-`|       13 | Box|box1830352989 |               2 |       0 | NULL | 0x0A52082012377B22626F784964223A22626F7831383330333532393839222C226465736372697074696F6E223A2262617232222C2273697A65223A317D1A156578616D706C652E426F78244974656D416464656410021A11426F787C626F78313833303335323938396A2461636439633763302D383861382D343432612D613336642D643933343637613561303365 |`
+`|       13 | Box|box1830352989 |               2 |       0 | NULL | 0x0A52[....] |`
 
-This is a representation of an AddedItem event to the box with `PersistenceId`: `Box|box1830352989`. We'll attempt to read it in the CQRS exercises.
+This is a representation of an AddedItem event to the box with `PersistenceId`: `Box|box1830352989`.
 
 
 #### Feedback
