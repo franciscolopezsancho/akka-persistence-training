@@ -8,33 +8,21 @@ import akka.actor.typed.ActorRef
 
 object Box {
 
-  //STATE
-  case class Item(description: String)
-  final case class State(items: List[Item])
-  
+  case class State(value: String)
   object State {
-    val empty = State(List.empty)
+    val empty = null
   }
-
-  //COMMANDS
-  sealed trait Command
-  case class AddItem(description: String) extends Command
-
-  //EVENTS
-  sealed trait Event
-  case class ItemAdded(description: String) extends Event
+  trait Command
+  trait Event
 
   def apply(boxId: String): Behavior[Command] = {
     EventSourcedBehavior[Command, Event, State](
       PersistenceId("Box", boxId),
       State.empty,
-      (state, command) => commandHandler(state, command),
-      (state, event) => eventHandler(state, event)
+      (state, command) => Effect.none,
+      (state, event) => state
     )
   }
 
-  def commandHandler(state: State, command: Command) = ??? // what's the result type?
-
-  def eventHandler(state: State, event: Event) = ??? // what's the result type?
 
 }
