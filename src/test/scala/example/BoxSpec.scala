@@ -13,7 +13,6 @@ class BoxSpec extends ScalaTestWithActorTestKit(s"""
 
   "The box object" should {
     "accept Commands, transform them in events and persist" in {
-      val maxCapacity = 10
       val cart = testKit.spawn(Box("abcd"))
       cart ! AddItem("foo")
       cart ! AddItem("bar")
