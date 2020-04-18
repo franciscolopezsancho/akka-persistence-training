@@ -10,6 +10,10 @@ Then if you want to check your understanding, pick a step to implement, checkout
 ### Step 1. An empty Box
 We'll start with a basic implementation that contain the necesary types and the most basic component `akka.persistence.typed.scaladsl.EventSourcedBehavior` which is the very definition of an Persistence Entity Actor. Its persistence is achieved appending its events to a journal. 
 
+*goto: s1_an_empty_box*
+
+In here no exercise has to be done. Just having a look at the types
+
 Our Persistence Entity will be a Box that will be able to accept objects. Items. The definition of this type is already in the provided basic code. What you'll find in there is just the Box and its elements Commands, Events and State.
 
 Our Box, that is our behavior or actor, is defined with the following signature.  
@@ -32,7 +36,9 @@ Our Box, that is our behavior or actor, is defined with the following signature.
 
 ### Step2. Create flow Command -> Event -> State
 
-Here you just start with two methods to model the commandHandler and the eventHandler. The idea of the flow is Command -> Event -> State. It all beging by sending a Command message `AddItem` to the Box which then will trigger an `ItemAdded` event that will update the `State` of the Box.
+Here you just start with two methods to model the commandHandler and the eventHandler. The idea of the flow is Command -> Event -> State. It all beging by sending a **command** message `AddItem` to the Box which then will trigger an `ItemAdded` **event** that will update the `State` of the Box.
+
+*goto: s2_flow_ces to start the exercise*
 
 To do this you'll need to know about: 
 
@@ -52,6 +58,9 @@ Also you'll need to add a store to keep the state of the journal. This is config
 ### Step 3. Add replyTo
 
 Let's add now the reply. When some actor send's an `AddItem` now will also have to pass a reference to an Actor such as this `AddItem` Command will reply to.
+
+*goto: s3_reply_to to start the exercise*
+
 
 Apart from that now won't be enough with just `Effect.persist` as to reply to AddItem will need to concatenate `thenRun` after the persist. I recommend to have a look to the `akka.persistence.typed.scaladsl.EffectBuilder` api to check how to.
 
@@ -86,12 +95,18 @@ Another thought when testing. Take into account that if you want to check if two
 
 Now let's see how we can add a max room in the `Box` so in case we add an `Item` of size bigger than the room we have left we'll get back a `Rejected(item,roomLeft)`
 
+*goto: s4_business_logic to start the exercise*
+
+
 Maybe a good approach is to create this new bit of logic an just adjust the already existing test before dealing with Rejections, if that makes sense.
 
 ### 5. Let's add an external DB
 
 Let's add now an external DB, and connect to it with a JDBC driver. Is worth to mention that every time a ItemAdded is persisted, this will land in a table, called journal, we will have to create. All the required documentation to do this is in here:
 https://doc.akka.io/docs/akka-persistence-jdbc/3.5.2/
+
+*goto: s5_external_db to start the exercise*
+
 
 From the link above I would not create the snapshot table until required, though. 
 
@@ -102,7 +117,7 @@ You can run start the mysql db with `docker-compose up -d` from `src/test/resour
 Last but no least you may find a problem when trying to write to disk as we still didn't add any Serialization. Have a look at https://doc.akka.io/docs/akka/current/serialization.html#usage for a general understanding
 I would recommend to use Jackson though and https://doc.akka.io/docs/akka/current/serialization-jackson.html is all you need to know. I would recommend don't solve this part until you get an error of this sort.
 
-#### hopefully done
+#### hopefully everything is done
 
 Now everything is in place you should be able to see entries in the DB such as 
 `|       13 | Box|box1830352989 |               2 |       0 | NULL | 0x0A52[....] |`
