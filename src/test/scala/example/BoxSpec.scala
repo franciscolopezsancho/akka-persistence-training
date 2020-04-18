@@ -15,8 +15,9 @@ class BoxSpec extends ScalaTestWithActorTestKit(s"""
     "accept Commands, transform them in events and persist" in {
       val cart = testKit.spawn(Box("abcd"))
       val probe = testKit.createTestProbe[State]()
-      cart ! AddItem("bar", probe.ref)
-      probe.expectMessage(State(List(Item("bar"))))
+      cart ! AddItem("foo")
+      cart ! AddItem("bar")
+      Thread.sleep(1000)
     }
   }
 
