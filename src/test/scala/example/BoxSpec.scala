@@ -16,7 +16,6 @@ class BoxSpec extends ScalaTestWithActorTestKit(s"""
       val cart = testKit.spawn(Box("abcd"))
       cart ! AddItem("foo")
       cart ! AddItem("bar")
-      Thread.sleep(1000)
     }
   }
 
