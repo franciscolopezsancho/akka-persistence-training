@@ -1,7 +1,7 @@
 # AKKA PERSISTENCE
 The gist of this exercises is to get familiar with event sourcing through [akka persistence](https://doc.akka.io/docs/akka/current/typed/persistence.html)
 
-This assumes some familiarity with Akka Typed (at least what a Behavior is). And also a vage idea of what problem event sourcing and akka persistence try to solve. 
+This assumes some familiarity with Akka Typed (at least what a Behavior is). And also a vague idea of what problem event sourcing and akka persistence try to solve. 
 
 ### Recommended approach
 Try to read all the steps, the first paragraph probably would suffice, to get a general view of what we are going to. 
@@ -34,7 +34,7 @@ Our Box, that is our behavior or actor, is defined with the following signature.
 
 
 
-### Step2. Create flow Command -> Event -> State
+### Step 2. Create flow Command -> Event -> State
 
 Here you just start with two methods to model the commandHandler and the eventHandler. The idea of the flow is Command -> Event -> State. It all beging by sending a **command** message `AddItem` to the Box which then will trigger an `ItemAdded` **event** that will update the `State` of the Box.
 
@@ -91,7 +91,7 @@ Another thought when testing. Take into account that if you want to check if two
     
 
 
-### 4. Let's add a bit of logic
+### Step 4. Let's add a bit of logic
 
 Now let's see how we can add a max room in the `Box` so in case we add an `Item` of size bigger than the room we have left we'll get back a `Rejected(item,roomLeft)`
 
@@ -100,7 +100,7 @@ Now let's see how we can add a max room in the `Box` so in case we add an `Item`
 
 Maybe a good approach is to create this new bit of logic an just adjust the already existing test before dealing with Rejections, if that makes sense.
 
-### 5. Let's add an external DB
+### Step 5. Let's add an external DB
 
 Let's add now an external DB, and connect to it with a JDBC driver. Is worth to mention that every time a ItemAdded is persisted, this will land in a table, called journal, we will have to create. All the required documentation to do this is in here:
 https://doc.akka.io/docs/akka-persistence-jdbc/3.5.2/
@@ -125,8 +125,14 @@ Now everything is in place you should be able to see entries in the DB such as
 This is a representation of an AddedItem event to the box with `PersistenceId`: `Box|box1830352989`.
 
 
+#### Acknowledgment
+
+Thanks to the Akka team to create such an amazing repo https://github.com/akka/akka-samples
+from what I got inspiration. I strongly recommend to have a good look at it to see more advance techniques.
+
 #### Feedback
 
 I'd be more than happy to discuss if anything doesn't make sense and can be improved. In any case, hope this helps.
 
 Cheers!
+
