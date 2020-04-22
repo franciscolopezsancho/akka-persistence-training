@@ -1,7 +1,7 @@
 # AKKA PERSISTENCE
 The gist of this exercises is to get familiar with event sourcing through [akka persistence](https://doc.akka.io/docs/akka/current/typed/persistence.html)
 
-This assumes some familiarity with Akka Typed (at least what a Behavior is). And also a vague idea of what problem event sourcing and akka persistence try to solve. 
+This assumes some familiarity with Akka Typed (at least what a Behavior is). And also a vague idea of what problem event sourcing and akka persistence try to solve.
 
 ### Recommended approach
 Try to read all the steps, the first paragraph probably would suffice, to get a general view of what we are going to. 
@@ -23,7 +23,7 @@ Our Box, that is our behavior or actor, is defined with the following signature.
       persistenceId: PersistenceId,
       emptyState: State,
       commandHandler: (State, Command) => Effect[Event, State],
-      eventHandler: (State, Event) => State): EventSourcedBehavior[Command, Event, State
+      eventHandler: (State, Event) => State): EventSourcedBehavior[Command, Event, State]
 ```
 
 1. A `PersistenceId`, composed by a value named `boxId` that we will pass when instantiating an Actor of this kind. Plus the constant String `Box`.  Bare in mind that we'll just use `boxId` as users of this entity. It's what we'll pass when creating a new Actor. Its complete id: `PersistenceId("Box",boxId)` won't be used by us along these exercises.
