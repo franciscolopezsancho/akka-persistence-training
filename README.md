@@ -23,7 +23,7 @@ Our Box, that is our behavior or actor, is defined with the following signature.
       persistenceId: PersistenceId,
       emptyState: State,
       commandHandler: (State, Command) => Effect[Event, State],
-      eventHandler: (State, Event) => State): EventSourcedBehavior[Command, Event, State
+      eventHandler: (State, Event) => State): EventSourcedBehavior[Command, Event, State]
 ```
 
 1. A `PersistenceId`, composed by a value named `boxId` that we will pass when instantiating an Actor of this kind. Plus the constant String `Box`.  Bare in mind that we'll just use `boxId` as users of this entity. It's what we'll pass when creating a new Actor. Its complete id: `PersistenceId("Box",boxId)` won't be used by us along these exercises.
