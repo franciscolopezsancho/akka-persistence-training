@@ -24,7 +24,7 @@ object Box {
   //COMMANDS
   sealed trait Command
   case class AddItem(
-      description: String,
+      description: String
   ) extends Command
 
   //EVENTS
@@ -49,8 +49,7 @@ object Box {
   ): Effect[Event, State] = {
     command match {
       case AddItem(description) => {
-        Effect
-          .persist(ItemAdded(boxId, description))
+        Effect.persist(ItemAdded(boxId, description))
       }
     }
   }
