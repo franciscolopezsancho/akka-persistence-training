@@ -9,9 +9,11 @@ val akkaVersion = "2.6.4"
 
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-persistence-typed" % akkaVersion,
-  "com.typesafe.akka" %% "akka-persistence-query" % akkaVersion,
+  "com.typesafe.akka" %% "akka-persistence-query" % akkaVersion, // TODO? https://github.com/akka/akka-persistence-jdbc/issues/314
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "com.github.dnvriend" %% "akka-persistence-jdbc" % "3.5.2",
+  "com.typesafe.slick" %% "slick" % "3.3.2",
+  "com.lightbend.akka" %% "akka-stream-alpakka-slick" % "2.0.0-RC2",
   "mysql" % "mysql-connector-java" % "8.0.19",
   "com.typesafe.akka" %% "akka-serialization-jackson" % "2.6.4",
   "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion % Test,
